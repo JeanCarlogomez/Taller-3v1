@@ -1,0 +1,36 @@
+# Requerimientos del Proyecto de Gestión de Encuestas
+
+## Funcionalidades Principales
+
+1. **Creación de Encuestas**:
+   - Los coordinadores pueden crear encuestas personalizadas.
+   - Cada encuesta debe tener un título y una fecha de creación.
+
+2. **Manejo de Preguntas**:
+   - Cada encuesta puede tener múltiples preguntas.
+   - Las preguntas pueden ser de diferentes tipos (ej. selección múltiple, texto).
+
+3. **Cargar Participantes**:
+   - Los coordinadores pueden cargar participantes desde un archivo CSV.
+   - El archivo CSV debe contener las siguientes columnas: `nombre`, `correo`, `edad`, `genero`, `ubicacion`.
+
+4. **Gestión de Grupos**:
+   - Los coordinadores pueden crear grupos de participantes basados en criterios específicos (ej. edad, ubicación).
+   - Una encuesta puede aplicarse a un grupo específico de participantes.
+
+5. **Registro de Respuestas**:
+   - Los participantes pueden responder a las preguntas de la encuesta.
+   - Cada respuesta debe estar asociada a un participante y a la pregunta correspondiente.
+
+6. **Generación de Informes**:
+   - Después de la recopilación de respuestas, se debe generar un informe que incluya estadísticas de respuesta.
+   - El informe debe mostrar la tasa de respuesta y los resultados de la encuesta.
+
+## Requisitos Técnicos
+
+1. **Lenguaje de Programación**: Python 3.x
+2. **Módulos Utilizados**:
+   - `csv` para la lectura y escritura de archivos CSV.
+3. **Estructura del Proyecto**:
+   - Clases para `Encuesta`, `Pregunta`, `Respuesta`, `Usuario`, `Grupo`, `Informe`, y `Participante`.
+   - Debe seguir el diseño del diagrama UML proporcionado.

@@ -1,65 +1,52 @@
-# app/encuesta.py
-
-from typing import List, Optional
+import pytest
+from app.encuesta import Encuesta  # Clase con la primera letra en mayúsculas
 from app.pregunta import Pregunta
+from app.respuesta import Respuesta
+from app.usuario import Usuario
 from app.grupo import Grupo
-from app.participante import Participante
-from app.informe import Informe
-import csv
 
-class Encuesta:
-    def __init__(self, titulo: str, fechaCreacion: str = ""):
-        self.titulo = titulo               # Almacena el título de la encuesta
-        self.fechaCreacion = fechaCreacion  # Almacena la fecha de creación
-        self.preguntas: List[Pregunta] = []  # Lista para almacenar las preguntas
-        self.grupo: Optional[Grupo] = None  # Grupo al que se aplica la encuesta
-        self.informes: List[Informe] = []   # Lista para almacenar informes generados
+# PRESENTE MUCHOS PROBLEMAS A LA HORA DE INTENTAR EJECUTAR ESTAS PRUEBAS
 
-    def agregar_pregunta(self, pregunta: Pregunta) -> None:
-        self.preguntas.append(pregunta)  # Agrega una pregunta a la lista de preguntas
+# Pruebas para la clase Encuesta
+def test_crear_encuesta():
+    e = Encuesta(titulo="Encuesta de Satisfacción", fechaCreacion="2024-10-03")
+    assert e.titulo == "Encuesta de Satisfacción"
 
-    def aplicar_a_grupo(self, grupo: Grupo) -> None:
-        self.grupo = grupo  # Asigna un grupo a la encuesta
+def test_agregar_pregunta():
+    e = Encuesta(titulo="Encuesta de Satisfacción")
+    pregunta1 = Pregunta(texto="¿Cómo calificaría el servicio?")
+    pregunta2 = Pregunta(texto="¿Recomendaría el servicio?")
+    pregunta3 = Pregunta(texto="¿Cómo mejoraría el servicio?")
+    e.agregar_pregunta(pregunta1)
+    e.agregar_pregunta(pregunta2)
+    e.agregar_pregunta(pregunta3)
+    assert len(e.preguntas) == 3
 
-    def cargar_participantes(self, csv_file: str) -> List[Participante]:
-        participantes = []
-        try:
-            with open(csv_file, mode='r', encoding='utf-8-sig') as file:
-                reader = csv.DictReader(file)
-                for row in reader:
-                    # Asegurarse de que cada campo esté presente y manejar valores faltantes
-                    nombre = row.get('nombre', '').strip()
-                    correo = row.get('correo', '').strip()
-                    edad_str = row.get('edad')
-                    genero = row.get('genero', '').strip()
-                    ubicacion = row.get('ubicacion', '').strip()
+# Pruebas para la clase Pregunta
+def test_crear_pregunta():
+    p = Pregunta(texto="¿Cuál es su edad?")
+    assert p.texto == "¿Cuál es su edad?"
 
-                    # Convertir edad a int solo si tiene un valor válido
-                    edad = int(edad_str) if edad_str and edad_str.isdigit() else None
+# Pruebas para la clase Respuesta
+def test_crear_respuesta():
+    u = Usuario(nombre="Juan Pérez", email="juan@example.com")
+    p = Pregunta(texto="¿Cómo calificaría el servicio?")
+    r = Respuesta(p, u, "Excelente")
+    assert r.valor == "Excelente"
 
-                    # Verificar que los campos obligatorios no estén vacíos
-                    if nombre and correo and edad is not None and genero:
-                        participante = Participante(
-                            nombre=nombre,
-                            correo=correo,
-                            edad=edad,
-                            genero=genero,
-                            ubicacion=ubicacion
-                        )
-                        participantes.append(participante)
-                        print(f"Participante agregado: {participante.nombre}")  # Mensaje de depuración
-                    else:
-                        print(f"Advertencia: Datos incompletos en la fila {row}")  # Mensaje de advertencia
-            return participantes
-        except Exception as e:
-            print(f"Error al cargar participantes: {e}")
-            return []
+# Pruebas para la clase Usuario
+def test_crear_usuario():
+    u = Usuario(nombre="Ana García", email="ana@example.com")
+    assert u.nombre == "Ana García"
 
-    def generar_informe(self) -> Informe:
-        tasa_respuesta = 0.0  # Aquí podrías calcular la tasa de respuesta real
-        resultados = {}       # Datos de resultados de la encuesta
+# Pruebas para la clase Grupo
+def test_crear_grupo():
+    g = Grupo(nombre="Clientes VIP", criterios={"edad": ">= 30"})
+    assert g.nombre == "Clientes VIP"
 
-        informe = Informe(titulo_encuesta=self.titulo, tasa_respuesta=tasa_respuesta, resultados=resultados)
-        informe.calcular_estadisticas()
-        self.informes.append(informe)
-        return informe
+# Pruebas para la integración entre Encuesta y Grupo
+def test_encuesta_con_grupo():
+    e = Encuesta(titulo="Encuesta de Satisfacción")
+    g = Grupo(nombre="Clientes VIP")
+    e.aplicar_a_grupo(g)
+    assert e.grupo == g

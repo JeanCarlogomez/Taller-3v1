@@ -1,5 +1,3 @@
-# app/main.py
-
 from app.encuesta import Encuesta
 from app.pregunta import Pregunta
 from app.grupo import Grupo
