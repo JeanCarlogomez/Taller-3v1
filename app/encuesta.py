@@ -9,39 +9,53 @@ import csv
 
 class Encuesta:
     def __init__(self, titulo: str, fechaCreacion: str = ""):
-        self.titulo = titulo
-        self.fechaCreacion = fechaCreacion
-        self.preguntas = []
-        self.grupo = None
-        self.informes = []
+        self.titulo = titulo               # Almacena el título de la encuesta
+        self.fechaCreacion = fechaCreacion  # Almacena la fecha de creación
+        self.preguntas: List[Pregunta] = []  # Lista para almacenar las preguntas
+        self.grupo: Optional[Grupo] = None  # Grupo al que se aplica la encuesta
+        self.informes: List[Informe] = []   # Lista para almacenar informes generados
 
     def agregar_pregunta(self, pregunta: Pregunta) -> None:
-        self.preguntas.append(pregunta)
+        self.preguntas.append(pregunta)  # Agrega una pregunta a la lista de preguntas
 
     def aplicar_a_grupo(self, grupo: Grupo) -> None:
-        self.grupo = grupo
+        self.grupo = grupo  # Asigna un grupo a la encuesta
 
     def cargar_participantes(self, csv_file: str) -> List[Participante]:
         participantes = []
         try:
-            with open(csv_file, mode='r', encoding='utf-8') as file:
+            with open(csv_file, mode='r', encoding='utf-8-sig') as file:
                 reader = csv.DictReader(file)
                 for row in reader:
-                    participante = Participante(
-                        nombre=row.get('nombre'),
-                        correo=row.get('correo'),
-                        edad=int(row.get('edad')),
-                        genero=row.get('genero'),
-                        ubicacion=row.get('ubicacion', '')
-                    )
-                    participantes.append(participante)
+                    # Asegurarse de que cada campo esté presente y manejar valores faltantes
+                    nombre = row.get('nombre', '').strip()
+                    correo = row.get('correo', '').strip()
+                    edad_str = row.get('edad')
+                    genero = row.get('genero', '').strip()
+                    ubicacion = row.get('ubicacion', '').strip()
+
+                    # Convertir edad a int solo si tiene un valor válido
+                    edad = int(edad_str) if edad_str and edad_str.isdigit() else None
+
+                    # Verificar que los campos obligatorios no estén vacíos
+                    if nombre and correo and edad is not None and genero:
+                        participante = Participante(
+                            nombre=nombre,
+                            correo=correo,
+                            edad=edad,
+                            genero=genero,
+                            ubicacion=ubicacion
+                        )
+                        participantes.append(participante)
+                        print(f"Participante agregado: {participante.nombre}")  # Mensaje de depuración
+                    else:
+                        print(f"Advertencia: Datos incompletos en la fila {row}")  # Mensaje de advertencia
             return participantes
         except Exception as e:
             print(f"Error al cargar participantes: {e}")
             return []
 
     def generar_informe(self) -> Informe:
-        # Calcula aquí la tasa de respuesta u otros datos y pasa solo los datos necesarios
         tasa_respuesta = 0.0  # Aquí podrías calcular la tasa de respuesta real
         resultados = {}       # Datos de resultados de la encuesta
 
