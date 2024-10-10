@@ -12,7 +12,7 @@ Este proyecto es un **Sistema de Gestión de Encuestas** desarrollado en Python,
 
 1. **Clonar el repositorio**:
     Git Bash
-   git clone 
+   git clone https://github.com/JeanCarlogomez/Taller-3v1.git
 
 2. **Crear y activar un entorno virtual**: 
     py -m venv venv
